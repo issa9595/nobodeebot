@@ -1,6 +1,5 @@
 const { SlashCommandBuilder } = require("discord.js");
 const { peopleEmbed } = require("../../embeds/people");
-const { db } = require("../../firebase");
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -16,29 +15,12 @@ module.exports = {
       }
 
       const members = Array.from(voiceChannel.members.values());
-      const lastPickRes = await db.collection("last_pick").doc("current").get();
       let selectedMember = null;
-      const lastPickId = lastPickRes.exists ? lastPickRes.data().userId : null;
-      const eligibleMembers = members.filter(
-        (member) => member.id !== lastPickId
-      );
-
-      if (eligibleMembers.length === 0) {
         selectedMember = members[Math.floor(Math.random() * members.length)];
-      } else {
-        selectedMember =
-          eligibleMembers[Math.floor(Math.random() * eligibleMembers.length)];
-      }
 
-      await Promise.all([
-        db.collection("last_pick").doc("current").set({
-          userId: selectedMember.id,
-          date: Date.now(),
-        }),
-        interaction.reply({
-          embeds: [peopleEmbed(selectedMember)],
-        }),
-      ]);
+      await interaction.reply({
+        embeds: [peopleEmbed(selectedMember)],
+      });
     } catch (error) {
       console.error("Erreur lors de la sélection d'un utilisateur:", error);
       await interaction.reply({
