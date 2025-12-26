@@ -1,5 +1,4 @@
 require("dotenv").config();
-require("./firebase");
 const { Client, Collection, GatewayIntentBits } = require("discord.js");
 const { loadCommands } = require("./commands");
 const { loadEvents } = require("./events");
